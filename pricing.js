@@ -73,4 +73,11 @@ function calculateProductPrice(product, employee, selectedOptions) {
   }
 }
 
-module.exports = { calculateProductPrice }
+module.exports = {
+  formatPrice,
+  calculateProductPrice,
+  calculateLTDPrice,
+  calculateVolLifePrice,
+  calculateVolLifePricePerRole,
+  getEmployerContribution
+}
