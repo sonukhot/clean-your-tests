@@ -74,6 +74,7 @@ function calculateProductPrice(product, employee, selectedOptions) {
 }
 
 module.exports = {
+  formatPrice,
   calculateProductPrice,
   calculateLTDPrice,
   calculateVolLifePrice,
