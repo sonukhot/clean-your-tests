@@ -1,8 +1,14 @@
-const { expect } = require('chai')
+const chai = require('chai')
+const sinon = require('sinon')
+const sinonChai = require('sinon-chai')
 const { describe, it } = require('mocha')
 const employee = require('./employee')
 const products = require('./products')
 const pricing = require('../pricing')
+
+chai.use(sinonChai)
+const { expect } = chai
+
 
 describe('Pricing', () => {
 
@@ -97,7 +103,20 @@ describe('Pricing', () => {
   })
 
   describe('calculateProductPrice', () => {
-    it('returns the price for a voluntary life product for a single employee', () => {
+    let calculateVolLifePricespy
+    let calculateLTDPricespy
+
+    let sandbox
+    beforeEach(() => {
+      sandbox = sinon.createSandbox()
+      calculateVolLifePricespy = sandbox.spy(pricing, 'calculateVolLifePrice')
+      calculateLTDPricespy = sandbox.spy(pricing, 'calculateLTDPrice')
+    })
+    afterEach(() => {
+      sandbox.restore()
+    })
+
+    it.only('returns the price for a voluntary life product for a single employee', () => {
       const selectedOptions = {
         familyMembersToCover: ['ee'],
         coverageLevel: [{ role: 'ee', coverage: 125000 }],
@@ -105,9 +124,10 @@ describe('Pricing', () => {
       const price = pricing.calculateProductPrice(products.voluntaryLife, employee, selectedOptions)
 
       expect(price).to.equal(39.37)
+      expect(calculateVolLifePricespy).to.have.callCount(1)
     })
 
-    it('returns the price for a voluntary life product for an employee with a spouse', () => {
+    it.only('returns the price for a voluntary life product for an employee with a spouse', () => {
       const selectedOptions = {
         familyMembersToCover: ['ee', 'sp'],
         coverageLevel: [
@@ -117,16 +137,18 @@ describe('Pricing', () => {
       }
       const price = pricing.calculateProductPrice(products.voluntaryLife, employee, selectedOptions)
 
-      expect(price).to.equal(71.09)
+      expect(price).to.equal(8.1)
+      expect(calculateVolLifePricespy).to.have.callCount(1)
     })
 
-    it('returns the price for a disability product for an employee', () => {
+    it.only('returns the price for a disability product for an employee', () => {
       const selectedOptions = {
         familyMembersToCover: ['ee']
       }
       const price = pricing.calculateProductPrice(products.longTermDisability, employee, selectedOptions)
 
       expect(price).to.equal(22.04)
+      expect(calculateLTDPricespy).to.have.callCount(1)
     })
 
     it('throws an error on unknown product type', () => {
