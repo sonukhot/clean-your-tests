@@ -28,7 +28,7 @@ function calculateVolLifePrice(product, selectedOptions) {
   const { familyMembersToCover } = selectedOptions
 
   familyMembersToCover.forEach((role) => {
-    price = calculateVolLifePricePerRole(role, selectedOptions.coverageLevel, product.costs)
+    price += calculateVolLifePricePerRole(role, selectedOptions.coverageLevel, product.costs)
   })
 
   return price
@@ -63,11 +63,11 @@ function calculateProductPrice(product, employee, selectedOptions) {
     case 'volLife':
       price = this.calculateVolLifePrice(product, selectedOptions)
       employerContribution = this.getEmployerContribution(product.employerContribution, price)
-      return formatPrice(price - employerContribution)
+      return this.formatPrice(price - employerContribution)
     case 'ltd':
       price = this.calculateLTDPrice(product, employee, selectedOptions)
       employerContribution = this.getEmployerContribution(product.employerContribution, price)
-      return formatPrice(price - employerContribution)
+      return this.formatPrice(price - employerContribution)
     default:
       throw new Error(`Unknown product type: ${product.type}`)
   }
