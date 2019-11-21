@@ -28,7 +28,7 @@ function calculateVolLifePrice(product, selectedOptions) {
   const { familyMembersToCover } = selectedOptions
 
   familyMembersToCover.forEach((role) => {
-    price += calculateVolLifePricePerRole(role, selectedOptions.coverageLevel, product.costs)
+    price += this.calculateVolLifePricePerRole(role, selectedOptions.coverageLevel, product.costs)
   })
 
   return price
@@ -61,16 +61,48 @@ function calculateProductPrice(product, employee, selectedOptions) {
 
   switch (product.type) {
     case 'volLife':
-      price = calculateVolLifePrice(product, selectedOptions)
-      employerContribution = getEmployerContribution(product.employerContribution, price)
-      return formatPrice(price - employerContribution)
+      price = this.calculateVolLifePrice(product, selectedOptions)
+      employerContribution = this.getEmployerContribution(product.employerContribution, price)
+      return this.formatPrice(price - employerContribution)
     case 'ltd':
-      price = calculateLTDPrice(product, employee, selectedOptions)
-      employerContribution = getEmployerContribution(product.employerContribution, price)
-      return formatPrice(price - employerContribution)
+      price = this.calculateLTDPrice(product, employee, selectedOptions)
+      employerContribution = this.getEmployerContribution(product.employerContribution, price)
+      return this.formatPrice(price - employerContribution)
     default:
       throw new Error(`Unknown product type: ${product.type}`)
   }
 }
 
-module.exports = { calculateProductPrice }
+function calculateCommuterPricePerType(type, costs) {
+  const eeCost = costs.find(cost => {
+    return cost.type === type
+  })
+  return eeCost.price
+}
+
+function calculateCommuterPrice(commute, selectedOptions) {
+
+  switch (selectedOptions.benefit) {
+    case 'train':
+    case 'parking':
+      break
+    default:
+      throw new Error(`Unknown commute type: ${selectedOptions.benefit}`)
+  }
+
+  let price
+  let employerContribution
+  price = calculateCommuterPricePerType(selectedOptions.benefit, commute.costs)
+  employerContribution = commute.employerContribution.contribution
+
+  return price = price - employerContribution
+}
+
+module.exports = {
+  formatPrice,
+  calculateProductPrice,
+  calculateLTDPrice,
+  calculateVolLifePrice,
+  calculateVolLifePricePerRole,
+  getEmployerContribution, calculateCommuterPrice
+}
