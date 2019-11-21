@@ -28,7 +28,7 @@ function calculateVolLifePrice(product, selectedOptions) {
   const { familyMembersToCover } = selectedOptions
 
   familyMembersToCover.forEach((role) => {
-    price += calculateVolLifePricePerRole(role, selectedOptions.coverageLevel, product.costs)
+    price += this.calculateVolLifePricePerRole(role, selectedOptions.coverageLevel, product.costs)
   })
 
   return price
@@ -73,11 +73,36 @@ function calculateProductPrice(product, employee, selectedOptions) {
   }
 }
 
+function calculateCommuterPricePerType(type, costs) {
+  const eeCost = costs.find(cost => {
+    return cost.type === type
+  })
+  return eeCost.price
+}
+
+function calculateCommuterPrice(commute, selectedOptions) {
+
+  switch (selectedOptions.benefit) {
+    case 'train':
+    case 'parking':
+      break
+    default:
+      throw new Error(`Unknown commute type: ${selectedOptions.benefit}`)
+  }
+
+  let price
+  let employerContribution
+  price = calculateCommuterPricePerType(selectedOptions.benefit, commute.costs)
+  employerContribution = commute.employerContribution.contribution
+
+  return price = price - employerContribution
+}
+
 module.exports = {
   formatPrice,
   calculateProductPrice,
   calculateLTDPrice,
   calculateVolLifePrice,
   calculateVolLifePricePerRole,
-  getEmployerContribution
+  getEmployerContribution, calculateCommuterPrice
 }

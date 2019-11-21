@@ -104,35 +104,35 @@ describe('Pricing', () => {
     it('returns the employer contribution for Commuter product', () => {
       const product = products.commuter
       employerContribution = pricing.getEmployerContribution(product.employerContribution)
-      expect(employerContribution).to.equal(0)
+      expect(employerContribution).to.equal(75)
     })
   })
 
   describe('calculateCommuterPrice', () => {
     it('returns the price for train commute', () => {
       const selectedOptions = {
-        benefit: ['train']
+        benefit: 'train'
       }
       const price = pricing.calculateCommuterPrice(products.commuter, selectedOptions)
-      expect(price).to.equal(0)
+      expect(price).to.equal(9.75)
     })
 
     it('returns the price for car commute', () => {
       const selectedOptions = {
-        benefit: ['parking']
+        benefit: 'parking'
       }
       const price = pricing.calculateCommuterPrice(products.commuter, selectedOptions)
-      expect(price).to.equal(0)
+      expect(price).to.equal(175)
     })
 
-    it('returns the price for invalid commute type', () => {
-      const selectedOptions = {
-        benefit: ['walking']
+    it('throws an Error for invalid commute type', () => {
+      const unknownCommute = {
+        benefit: 'walking'
       }
-      const price = pricing.calculateCommuterPrice(products.commuter, selectedOptions)
-      expect(price).to.equal(0)
+      expect(() => pricing.calculateCommuterPrice(products.commuter, unknownCommute)).to.throw('Unknown commute type: walking')
     })
   })
+
   describe('calculateProductPrice', () => {
     let calculateVolLifePriceSpy
     let calculateLTDPriceSpy
